@@ -105,9 +105,12 @@ if __name__ == "__main__":
     arguments = sys.argv
 
     if len(arguments) == 2 and arguments[1] in ("--get-featured-title", "-ft"):
+        print("getting today's featured title")
         featured_title = _get_wikipedia_featured_title()
         save_content_to_file(featured_title, OUTPUT)
     elif len(arguments) == 3 and arguments[1] in ("--get-page-links", "-gl"):
+        print(f"getting links on wiki page {arguments[2]}")
+
         try:
             links = _get_wikipedia_page_links(arguments[2])
             links = _filter_wikipedia_titles(links)
@@ -117,6 +120,8 @@ if __name__ == "__main__":
             delete_dir(OUTPUT)
             print(wpnfe)
     elif len(arguments) == 3 and arguments[1] in ("--get-page-summary", "-gs"):
+        print(f"getting summary on wiki page {arguments[2]}")
+
         try:
             summary = _get_wikipedia_page_summary(arguments[2])
             save_content_to_file(summary, OUTPUT)
