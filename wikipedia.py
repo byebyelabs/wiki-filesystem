@@ -121,7 +121,7 @@ if __name__ == "__main__":
             delete_dir(OUTPUT)
             print(wpnfe)
     elif len(arguments) == 3 and arguments[1] in ("--get-page-summary", "-gs"):
-        page_title = arguments[2].split("/")[-1]
+        page_title = arguments[2].split("/")[-2]
         print(f"getting summary on wiki page {page_title}")
 
         try:
