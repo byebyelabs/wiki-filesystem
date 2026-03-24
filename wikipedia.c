@@ -75,7 +75,7 @@ char *get_root() {
   // root is always the featured title (ft) from Wikipedia
   char *args[] = {"python3",
                   "/home/bhattara/csc313/wiki-filesystem/wikipedia.py", "-ft",
-                  NULL};
+                  OUTPUT_FILE, NULL};
 
   run_python_script(args);
 
@@ -86,7 +86,7 @@ char *get_dirs(char *curr_dir) {
   // get links contained in the page for this dir name
   char *args[] = {"python3",
                   "/home/bhattara/csc313/wiki-filesystem/wikipedia.py", "-gl",
-                  curr_dir, NULL};
+                  curr_dir, OUTPUT_FILE, NULL};
 
   run_python_script(args);
 
@@ -97,7 +97,7 @@ char *get_content(char *curr_dir) {
   // get wikipedia summary of the page for this dir name
   char *args[] = {"python3",
                   "/home/bhattara/csc313/wiki-filesystem/wikipedia.py", "-gs",
-                  curr_dir, NULL};
+                  curr_dir, OUTPUT_FILE, NULL};
 
   run_python_script(args);
 

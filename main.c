@@ -10,6 +10,8 @@
 #include <sys/stat.h>
 #include "wikipedia.h"
 
+const char* content_filename = "00_content";
+
 // initialize the filesystem
 static void* wiki_init(struct fuse_conn_info *conn, struct fuse_config *cfg) {
 	return NULL;
@@ -32,10 +34,9 @@ static int wiki_getattr(
         return 0;
 	}
 
-    const char* content_suffix = "/content";
     size_t path_len = strlen(path);
-    size_t suffix_len = strlen("/content");
-    if (path_len - suffix_len > 0 && strcmp(path + (path_len - suffix_len), content_suffix) == 0){
+    size_t suffix_len = strlen(content_filename) + 1; // + 1 for the prefixed slash
+    if (path_len - suffix_len > 0 && strcmp(path + (path_len - suffix_len) + 1, content_filename) == 0){
         // read only
         stbuf->st_mode = S_IFREG | 0444;
         // get size
@@ -62,7 +63,7 @@ static int wiki_readdir(
     }
 
     if (!is_root) {
-        filler(buf, "content", NULL, 0, 0);
+        filler(buf, content_filename, NULL, 0, 0);
     }
 
     // go through each dir
