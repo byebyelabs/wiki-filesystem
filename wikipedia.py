@@ -101,44 +101,28 @@ def save_content_to_file(content: str, output_dir: str):
         f.write(content)
 
 
-arguments = sys.argv
+if __name__ == "__main__":
+    arguments = sys.argv
 
-if len(arguments) == 2 and arguments[1] in ("--get-featured-title", "-ft"):
-    featured_title = _get_wikipedia_featured_title()
-    save_content_to_file(featured_title, OUTPUT)
-elif len(arguments) == 3 and arguments[1] in ("--get-page-links", "-gl"):
-    try:
-        links = _get_wikipedia_page_links(arguments[2])
-        links = _filter_wikipedia_titles(links)
-        links = "\n".join(links)
-        save_content_to_file(links, OUTPUT)
-    except WikipediaPageNotFoundError as wpnfe:
-        delete_dir(OUTPUT)
-        print(wpnfe)
-elif len(arguments) == 3 and arguments[1] in ("--get-page-summary", "-gs"):
-    try:
-        summary = _get_wikipedia_page_summary(arguments[2])
-        save_content_to_file(summary, OUTPUT)
-    except WikipediaPageNotFoundError as wpnfe:
-        delete_dir(OUTPUT)
-        print(wpnfe)
-else:
-    # improper usage
-    raise Exception("improper arguments passed")
-
-# if __name__ == "__main__":
-#     # get today's featured wikipedia page title
-#     print("> getting today's featured wikipedia page title")
-#     todays_featured_title = _get_wikipedia_featured_title()
-#     print(f">>> {todays_featured_title}")
-
-#     # get page links on wikipedia page
-#     print(f"> getting page links on wikipedia page {todays_featured_title}")
-#     page_links = _get_wikipedia_page_links(todays_featured_title)
-#     print(f">>> found {len(page_links)} links")
-
-#     # save page links to file
-#     output_file = f".local.wiki.txt"
-#     print(f"> saving page links to file")
-#     save_wikipedia_page_links(todays_featured_title, output_file)
-#     print(f">>> saved to {output_file}")
+    if len(arguments) == 2 and arguments[1] in ("--get-featured-title", "-ft"):
+        featured_title = _get_wikipedia_featured_title()
+        save_content_to_file(featured_title, OUTPUT)
+    elif len(arguments) == 3 and arguments[1] in ("--get-page-links", "-gl"):
+        try:
+            links = _get_wikipedia_page_links(arguments[2])
+            links = _filter_wikipedia_titles(links)
+            links = "\n".join(links)
+            save_content_to_file(links, OUTPUT)
+        except WikipediaPageNotFoundError as wpnfe:
+            delete_dir(OUTPUT)
+            print(wpnfe)
+    elif len(arguments) == 3 and arguments[1] in ("--get-page-summary", "-gs"):
+        try:
+            summary = _get_wikipedia_page_summary(arguments[2])
+            save_content_to_file(summary, OUTPUT)
+        except WikipediaPageNotFoundError as wpnfe:
+            delete_dir(OUTPUT)
+            print(wpnfe)
+    else:
+        # improper usage
+        raise Exception("improper arguments passed")
