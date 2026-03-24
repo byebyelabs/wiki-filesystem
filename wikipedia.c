@@ -34,7 +34,7 @@ char* read_output_file() {
 
 char* get_root() {
     // root is always the featured title (ft) from Wikipedia
-    char *args[] = { "wikipedia.py", "-ft" };
+    char *args[] = { "python3", "wikipedia.py", "-ft", NULL};
     
     if(execvp("python3", args)) {
         perror("execvp failed: get_root");
@@ -46,7 +46,7 @@ char* get_root() {
 
 char* get_dirs(char* curr_dir) {
     // get links contained in the page for this dir name
-    char *args[] = { "wikipedia.py", "-gl", curr_dir };
+    char *args[] = { "python3", "wikipedia.py", "-gl", curr_dir, NULL };
     
     if(execvp("python3", args)) {
         perror("execvp failed: get_dirs");
@@ -58,7 +58,7 @@ char* get_dirs(char* curr_dir) {
 
 char* get_content(char* curr_dir) {
     // get wikipedia summary of the page for this dir name
-    char *args[] = { "wikipedia.py", "-gs", curr_dir };
+    char *args[] = { "python3", "wikipedia.py", "-gs", curr_dir, NULL};
     
     if(execvp("python3", args)) {
         perror("execvp failed: get_content");
