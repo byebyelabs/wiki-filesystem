@@ -3,16 +3,17 @@
 #include "wikipedia.h"
 
 // Output is guaranteed to be written at this location after Python call
-static char* OUTPUT_FILE = "/home/bhattara/csc313/wiki-filesystem/.local.output.txt";
+static char *OUTPUT_FILE =
+    "/home/bhattara/csc313/wiki-filesystem/.local.output.txt";
 
-void run_python_script(char** args) {
+void run_python_script(char **args) {
   pid_t pid = fork();
   if (pid == -1) {
     perror("fork failed");
     exit(2);
   }
   if (pid == 0) {
-    if(execvp("python3", args)) {
+    if (execvp("python3", args)) {
       perror("execvp failed: get_root");
       exit(2);
     }
@@ -28,53 +29,71 @@ void run_python_script(char** args) {
 
 // Returns the contents of the output file
 // Must be freed by caller
-char* read_output_file() {
-    FILE* op = fopen(OUTPUT_FILE, "r+");
-    if (op == NULL) { 
-        // file does not exist (request was unsuccessful)    
-        return NULL;
-    }
+char *read_output_file() {
+  FILE *op = fopen(OUTPUT_FILE, "r");
+  if (op == NULL) {
+    // file does not exist (request was unsuccessful)
+    return NULL;
+  }
 
-    int content_sz = 0;
-    do {
-        content_sz += 1;
-    } while (fgetc(op) != EOF);
+  // this means the file is empty
+  if (fseek(op, 0, SEEK_END) != 0) {
+    fclose(op);
+    return NULL;
+  }
 
-    char* content = malloc(content_sz);
-    fseek(op, 0, SEEK_SET);
-    
-    int index = 0;
-    do {
-        content[index++] = fgetc(op);
-    } while (index < content_sz);
+  // get the size of the file
+  long content_sz = ftell(op);
 
-    content[index] = '\0';
-    return content;
+  if (content_sz < 0) {
+    fclose(op);
+    return NULL;
+  }
+  if (fseek(op, 0, SEEK_SET) != 0) {
+    fclose(op);
+    return NULL;
+  }
+
+  char *content = malloc((size_t)content_sz + 1);
+  if (content == NULL) {
+    fclose(op);
+    return NULL;
+  }
+  size_t n = fread(content, 1, (size_t)content_sz, op);
+  fclose(op);
+  content[n] = '\0';
+  return content;
 }
 
-char* get_root() {
-    // root is always the featured title (ft) from Wikipedia
-    char *args[] = { "python3", "/home/bhattara/csc313/wiki-filesystem/wikipedia.py", "-ft", NULL};
-    
-    run_python_script(args);
-    
-    return read_output_file();
+char *get_root() {
+  // root is always the featured title (ft) from Wikipedia
+  char *args[] = {"python3",
+                  "/home/bhattara/csc313/wiki-filesystem/wikipedia.py", "-ft",
+                  NULL};
+
+  run_python_script(args);
+
+  return read_output_file();
 }
 
-char* get_dirs(char* curr_dir) {
-    // get links contained in the page for this dir name
-    char *args[] = { "python3", "/home/bhattara/csc313/wiki-filesystem/wikipedia.py", "-gl", curr_dir, NULL };
-    
-    run_python_script(args);
-    
-    return read_output_file();
+char *get_dirs(char *curr_dir) {
+  // get links contained in the page for this dir name
+  char *args[] = {"python3",
+                  "/home/bhattara/csc313/wiki-filesystem/wikipedia.py", "-gl",
+                  curr_dir, NULL};
+
+  run_python_script(args);
+
+  return read_output_file();
 }
 
-char* get_content(char* curr_dir) {
-    // get wikipedia summary of the page for this dir name
-    char *args[] = { "python3", "/home/bhattara/csc313/wiki-filesystem/wikipedia.py", "-gs", curr_dir, NULL};
-    
-    run_python_script(args);
-    
-    return read_output_file();
+char *get_content(char *curr_dir) {
+  // get wikipedia summary of the page for this dir name
+  char *args[] = {"python3",
+                  "/home/bhattara/csc313/wiki-filesystem/wikipedia.py", "-gs",
+                  curr_dir, NULL};
+
+  run_python_script(args);
+
+  return read_output_file();
 }
