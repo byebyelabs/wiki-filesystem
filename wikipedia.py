@@ -1,4 +1,5 @@
 import os
+import sys
 from datetime import UTC, datetime
 
 import requests
@@ -9,6 +10,8 @@ from wikipediaapi import Wikipedia
 USER_AGENT = (
     "Wikipedia Explorer Filesystem/1.0 (https://github.com/byebyelabs/wiki-filesystem)"
 )
+
+OUTPUT = ".local.output.txt"
 
 
 class WikipediaPageNotFoundError(Exception):
@@ -34,22 +37,27 @@ def _get_wikipedia_page_links(source_page_title: str) -> list[str]:
     return [link.title for link in page.links.values()]
 
 
-def save_wikipedia_page_links(page_title: str, output_dir: str):
-    """Save list of page titles to a file."""
+def _filter_wikipedia_titles(titles: list[str]) -> list[str]:
+    """Filter and sort list of strings (titles); filters out non-English (ascii) titles."""
+    filtered_titles: set[str] = set()
+    for title in titles:
+        title = title.strip().replace(" ", "_")
 
-    # fetch list of page links
-    links = _get_wikipedia_page_links(page_title)
+        # skip empty title
+        if not title:
+            continue
 
-    # clean up output file if it exists
-    if os.path.exists(output_dir):
-        os.remove(output_dir)
+        # skip accents and different languages
+        if not title.isascii():
+            continue
 
-    # create output file and write list of page links
-    with open(output_dir, "w") as f:
-        f.write("\n".join(links))
+        filtered_titles.add(title)
+
+    # sorts and converts to list of strings
+    return sorted(list(filtered_titles))
 
 
-def get_wikipedia_featured_title():
+def _get_wikipedia_featured_title():
     """Get title of currently featured page on Wikipedia."""
 
     # format wikipedia API URL for today's featured article
@@ -64,19 +72,73 @@ def get_wikipedia_featured_title():
     return featured_article_title
 
 
-if __name__ == "__main__":
-    # get today's featured wikipedia page title
-    print("> getting today's featured wikipedia page title")
-    todays_featured_title = get_wikipedia_featured_title()
-    print(f">>> {todays_featured_title}")
+def _get_wikipedia_page_summary(source_page_title: str) -> str:
+    """Get summary of Wikipedia page by title."""
 
-    # get page links on wikipedia page
-    print(f"> getting page links on wikipedia page {todays_featured_title}")
-    page_links = _get_wikipedia_page_links(todays_featured_title)
-    print(f">>> found {len(page_links)} links")
+    # initialize Wikipedia API client and read source page
+    wiki = Wikipedia(user_agent=USER_AGENT, language="en")
+    page = wiki.page(source_page_title)
 
-    # save page links to file
-    output_file = f".local.wiki.txt"
-    print(f"> saving page links to file")
-    save_wikipedia_page_links(todays_featured_title, output_file)
-    print(f">>> saved to {output_file}")
+    # raise custom error if wikipedia page does not exist
+    if not page.exists():
+        raise WikipediaPageNotFoundError(source_page_title)
+
+    return page.summary
+
+
+def delete_dir(output_dir: str):
+    # clean up output file if it exists
+    if os.path.exists(output_dir):
+        os.remove(output_dir)
+
+
+def save_content_to_file(content: str, output_dir: str):
+    # clean up output file if it exists
+    delete_dir(output_dir)
+
+    # create output file and write content
+    with open(output_dir, "w") as f:
+        f.write(content)
+
+
+arguments = sys.argv
+
+if len(arguments) == 2 and arguments[1] in ("--get-featured-title", "-ft"):
+    featured_title = _get_wikipedia_featured_title()
+    save_content_to_file(featured_title, OUTPUT)
+elif len(arguments) == 3 and arguments[1] in ("--get-page-links", "-gl"):
+    try:
+        links = _get_wikipedia_page_links(arguments[2])
+        links = _filter_wikipedia_titles(links)
+        links = "\n".join(links)
+        save_content_to_file(links, OUTPUT)
+    except WikipediaPageNotFoundError as wpnfe:
+        delete_dir(OUTPUT)
+        print(wpnfe)
+elif len(arguments) == 3 and arguments[1] in ("--get-page-summary", "-gs"):
+    try:
+        summary = _get_wikipedia_page_summary(arguments[2])
+        save_content_to_file(summary, OUTPUT)
+    except WikipediaPageNotFoundError as wpnfe:
+        delete_dir(OUTPUT)
+        print(wpnfe)
+else:
+    # improper usage
+    raise Exception("improper arguments passed")
+
+# if __name__ == "__main__":
+#     # get today's featured wikipedia page title
+#     print("> getting today's featured wikipedia page title")
+#     todays_featured_title = _get_wikipedia_featured_title()
+#     print(f">>> {todays_featured_title}")
+
+#     # get page links on wikipedia page
+#     print(f"> getting page links on wikipedia page {todays_featured_title}")
+#     page_links = _get_wikipedia_page_links(todays_featured_title)
+#     print(f">>> found {len(page_links)} links")
+
+#     # save page links to file
+#     output_file = f".local.wiki.txt"
+#     print(f"> saving page links to file")
+#     save_wikipedia_page_links(todays_featured_title, output_file)
+#     print(f">>> saved to {output_file}")
