@@ -109,10 +109,7 @@ if __name__ == "__main__":
         featured_title = _get_wikipedia_featured_title()
         save_content_to_file(featured_title, OUTPUT)
     elif len(arguments) == 3 and arguments[1] in ("--get-page-links", "-gl"):
-        page_title = arguments[2]
-        if page_title[0] == "/":
-            page_title = page_title[1:]
-
+        page_title = arguments[2].split("/")[-1]
         print(f"getting links on wiki page {page_title}")
 
         try:
@@ -124,10 +121,7 @@ if __name__ == "__main__":
             delete_dir(OUTPUT)
             print(wpnfe)
     elif len(arguments) == 3 and arguments[1] in ("--get-page-summary", "-gs"):
-        page_title = arguments[2]
-        if page_title[0] == "/":
-            page_title = page_title[1:]
-
+        page_title = arguments[2].split("/")[-1]
         print(f"getting summary on wiki page {page_title}")
 
         try:
