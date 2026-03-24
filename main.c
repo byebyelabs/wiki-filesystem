@@ -65,7 +65,7 @@ static int wiki_readdir(
     int len = strlen(dirs);
     char* dirs_ptr = dirs;
     while (dirs_ptr != NULL) {
-        const char* dir = strsep(dirs_ptr, "\n");
+        const char* dir = strsep(&dirs_ptr, "\n");
         filler(buf, dir, NULL, 0, 0);
     }
 
