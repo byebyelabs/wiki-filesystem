@@ -1,14 +1,8 @@
 // C Wrapper for the Python Wrapper that wraps Wikipedia API
 
 #include "wikipedia.h"
-
-// Output is guaranteed to be written at this location after Python call
-// CWD will be overridden by the Python script to be the directory of the executable
-static char *OUTPUT_FILE =
-    "$CWD/.local.output.txt";
-
-static char *PYTHON_SCRIPT_PATH =
-    "$CWD/wikipedia.py";
+#include "wikilocation.c"
+// ^ this file is generated after running meta.py ^
 
 void run_python_script(char **args) {
   pid_t pid = fork();
