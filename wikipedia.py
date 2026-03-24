@@ -100,10 +100,12 @@ def save_content_to_file(content: str, output_dir: str):
 if __name__ == "__main__":
     arguments = sys.argv
 
-    if len(arguments) == 2 and arguments[1] in ("--get-featured-title", "-ft"):
+    if len(arguments) == 3 and arguments[1] in ("--get-featured-title", "-ft"):
         print("getting today's featured title")
         featured_title = _get_wikipedia_featured_title()
-        save_content_to_file(featured_title, OUTPUT)
+        output_dir = arguments[2]
+        print(f"saving featured title to file: {output_dir}")
+        save_content_to_file(featured_title, output_dir)
     elif len(arguments) == 4 and arguments[1] in ("--get-page-links", "-gl"):
         page_title = arguments[2].split("/")[-1]
         print(f"getting links on wiki page {page_title}")
