@@ -11,7 +11,7 @@ USER_AGENT = (
     "Wikipedia Explorer Filesystem/1.0 (https://github.com/byebyelabs/wiki-filesystem)"
 )
 
-OUTPUT = ".local.output.txt"
+OUTPUT = "/home/bhattara/csc313/wiki-filesystem/.local.output.txt"
 
 
 class WikipediaPageNotFoundError(Exception):

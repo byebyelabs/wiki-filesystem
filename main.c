@@ -29,20 +29,17 @@ static int wiki_getattr(
         // st_nlisk is set to 2 for directories, because of the
         // "." and ".." entries
 		stbuf->st_nlink = 2;
+        return 0;
 	}
 
-
-
-    if (strcmp(path, "/") == 0) {
-        stbuf->st_mode = S_IFDIR | 0755;
-        stbuf->st_nlink = 2;
-    } else if (strcmp(path, "/hello.txt") == 0) {
-        stbuf->st_mode = S_IFREG | 0444;
-        stbuf->st_nlink = 1;
-        stbuf->st_size = strlen("Hello World!\n");
-    } else {
+    // attempt to get content
+    const char* content = get_dirs(path);
+    if (content == NULL) {
         return -ENOENT;
     }
+
+    stbuf->st_mode = S_IFDIR | 0755;
+    stbuf->st_nlink = 2;
     return 0;
 }
 
