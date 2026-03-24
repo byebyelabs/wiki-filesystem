@@ -11,8 +11,6 @@ USER_AGENT = (
     "Wikipedia Explorer Filesystem/1.0 (https://github.com/byebyelabs/wiki-filesystem)"
 )
 
-OUTPUT = "/home/bhattara/csc313/wiki-filesystem/.local.output.txt"
-
 
 class WikipediaPageNotFoundError(Exception):
     """Custom error raised when a Wikipedia page is not found."""
@@ -115,14 +113,9 @@ if __name__ == "__main__":
         try:
             links = _get_wikipedia_page_links(page_title)
             links = _filter_wikipedia_titles(links)
-<<<<<<< HEAD
-            links = "\n".join(links[:5])
-            save_content_to_file(links, OUTPUT)
-=======
             links = "\n".join(links)
             print(f"saving content to file: {output_dir}")
             save_content_to_file(links, output_dir)
->>>>>>> a2ea41f (removed hardcoded output spec in py script)
         except WikipediaPageNotFoundError as wpnfe:
             delete_dir(output_dir)
             print(wpnfe)
