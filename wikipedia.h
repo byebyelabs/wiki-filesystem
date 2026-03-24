@@ -9,6 +9,6 @@
 
 char* get_root();
 
-char** get_dirs(char* );
+char* get_dirs(char* curr_dir);
 
-char* get_content();
+char* get_content(char* curr_dir);
