@@ -3,8 +3,12 @@
 #include "wikipedia.h"
 
 // Output is guaranteed to be written at this location after Python call
+// CWD will be overridden by the Python script to be the directory of the executable
 static char *OUTPUT_FILE =
-    "/home/bhattara/csc313/wiki-filesystem/.local.output.txt";
+    "$CWD/.local.output.txt";
+
+static char *PYTHON_SCRIPT_PATH =
+    "$CWD/wikipedia.py";
 
 void run_python_script(char **args) {
   pid_t pid = fork();
@@ -74,7 +78,7 @@ char *read_output_file() {
 char *get_root() {
   // root is always the featured title (ft) from Wikipedia
   char *args[] = {"python3",
-                  "/home/bhattara/csc313/wiki-filesystem/wikipedia.py", "-ft",
+                  PYTHON_SCRIPT_PATH, "-ft",
                   OUTPUT_FILE, NULL};
 
   run_python_script(args);
@@ -85,7 +89,7 @@ char *get_root() {
 char *get_dirs(char *curr_dir) {
   // get links contained in the page for this dir name
   char *args[] = {"python3",
-                  "/home/bhattara/csc313/wiki-filesystem/wikipedia.py", "-gl",
+                  PYTHON_SCRIPT_PATH, "-gl",
                   curr_dir, OUTPUT_FILE, NULL};
 
   run_python_script(args);
@@ -96,7 +100,7 @@ char *get_dirs(char *curr_dir) {
 char *get_content(char *curr_dir) {
   // get wikipedia summary of the page for this dir name
   char *args[] = {"python3",
-                  "/home/bhattara/csc313/wiki-filesystem/wikipedia.py", "-gs",
+                  PYTHON_SCRIPT_PATH, "-gs",
                   curr_dir, OUTPUT_FILE, NULL};
 
   run_python_script(args);
