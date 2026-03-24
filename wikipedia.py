@@ -87,16 +87,14 @@ def _get_wikipedia_page_summary(source_page_title: str) -> str:
 
 
 def delete_dir(output_dir: str):
-    # clean up output file if it exists
+    """Delete input directory."""
     if os.path.exists(output_dir):
         os.remove(output_dir)
 
 
 def save_content_to_file(content: str, output_dir: str):
-    # clean up output file if it exists
+    """Save input content to given output directory. Deletes output directory if it exists."""
     delete_dir(output_dir)
-
-    # create output file and write content
     with open(output_dir, "w") as f:
         f.write(content)
 
@@ -108,27 +106,38 @@ if __name__ == "__main__":
         print("getting today's featured title")
         featured_title = _get_wikipedia_featured_title()
         save_content_to_file(featured_title, OUTPUT)
-    elif len(arguments) == 3 and arguments[1] in ("--get-page-links", "-gl"):
+    elif len(arguments) == 4 and arguments[1] in ("--get-page-links", "-gl"):
         page_title = arguments[2].split("/")[-1]
         print(f"getting links on wiki page {page_title}")
+
+        output_dir = arguments[3]
 
         try:
             links = _get_wikipedia_page_links(page_title)
             links = _filter_wikipedia_titles(links)
+<<<<<<< HEAD
             links = "\n".join(links[:5])
             save_content_to_file(links, OUTPUT)
+=======
+            links = "\n".join(links)
+            print(f"saving content to file: {output_dir}")
+            save_content_to_file(links, output_dir)
+>>>>>>> a2ea41f (removed hardcoded output spec in py script)
         except WikipediaPageNotFoundError as wpnfe:
-            delete_dir(OUTPUT)
+            delete_dir(output_dir)
             print(wpnfe)
-    elif len(arguments) == 3 and arguments[1] in ("--get-page-summary", "-gs"):
+    elif len(arguments) == 4 and arguments[1] in ("--get-page-summary", "-gs"):
         page_title = arguments[2].split("/")[-2]  # expect [page_title]/content
         print(f"getting summary on wiki page {page_title}")
 
+        output_dir = arguments[3]
+
         try:
             summary = _get_wikipedia_page_summary(page_title)
-            save_content_to_file(summary, OUTPUT)
+            print(f"saving content to file: {output_dir}")
+            save_content_to_file(summary, output_dir)
         except WikipediaPageNotFoundError as wpnfe:
-            delete_dir(OUTPUT)
+            delete_dir(output_dir)
             print(wpnfe)
     else:
         # improper usage
