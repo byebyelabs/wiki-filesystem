@@ -19,7 +19,7 @@ static void* wiki_init(struct fuse_conn_info *conn, struct fuse_config *cfg) {
 
 // get file attributes
 static int wiki_getattr(
-    const char *path, struct stat *stbuf, struct fuse_file_info *_
+    char *path, struct stat *stbuf, struct fuse_file_info *_
 ) {
     memset(stbuf, 0, sizeof(struct stat));
     if (strcmp(path, "/") == 0) {
