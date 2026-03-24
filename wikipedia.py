@@ -115,7 +115,7 @@ if __name__ == "__main__":
         try:
             links = _get_wikipedia_page_links(page_title)
             links = _filter_wikipedia_titles(links)
-            links = "\n".join(links)
+            links = "\n".join(links[:5])
             save_content_to_file(links, OUTPUT)
         except WikipediaPageNotFoundError as wpnfe:
             delete_dir(OUTPUT)

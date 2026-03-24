@@ -32,10 +32,17 @@ static int wiki_getattr(
         return 0;
 	}
 
-    // attempt to get content
-    const char* content = get_dirs(path);
-    if (content == NULL) {
-        return -ENOENT;
+    const char* content_suffix = "/content";
+    size_t path_len = strlen(path);
+    size_t suffix_len = strlen("/content");
+    if (path_len - suffix_len > 0 && strcmp(path + (path_len - suffix_len), content_suffix) == 0){
+        // read only
+        stbuf->st_mode = S_IFREG | 0444;
+        // get size
+        const char* content = get_content(path);
+        stbuf->st_size = strlen(content);
+        free(content);
+        return 0;
     }
 
     stbuf->st_mode = S_IFDIR | 0755;
@@ -48,15 +55,15 @@ static int wiki_readdir(
     const char *path, void *buf, fuse_fill_dir_t filler, off_t offset,
     struct fuse_file_info *fi, enum fuse_readdir_flags flags
 ) {
-    const char* dirs = strcmp(path, "/") == 0 ? get_root() : get_dirs(path);
+    bool is_root = strcmp(path, "/") == 0;
+    const char* dirs = is_root ? get_root() : get_dirs(path);
     if (dirs == NULL) {
         return -ENOENT;
     }
 
-    struct stat path_statbuf = { 0 };
-    wiki_getattr(path, &path_statbuf, NULL);
-    filler(buf, ".", &path_statbuf, 0, 0);
-    filler(buf, "..", NULL, 0, 0);
+    if (!is_root) {
+        filler(buf, "content", NULL, 0, 0);
+    }
 
     // go through each dir
     int len = strlen(dirs);
@@ -65,6 +72,8 @@ static int wiki_readdir(
         const char* dir = strsep(&dirs_ptr, "\n");
         filler(buf, dir, NULL, 0, 0);
     }
+
+    free(dirs);
 
 	return 0;
 }
@@ -90,6 +99,7 @@ static int wiki_read(
     const char *path, char *buf, size_t size, off_t offset,
     struct fuse_file_info *fi
 ) {
+    // assuming path ends with /content
     if (wiki_open(path, fi) != 0) {
         return -ENOENT;
     }
