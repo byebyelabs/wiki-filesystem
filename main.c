@@ -7,7 +7,8 @@
 #include <fcntl.h>
 #include <stddef.h>
 #include <assert.h>
-
+#include <sys/stat.h>
+#include "wikipedia.h"
 
 // initialize the filesystem
 static void* wiki_init(struct fuse_conn_info *conn, struct fuse_config *cfg) {
@@ -50,11 +51,40 @@ static int wiki_readdir(
     const char *path, void *buf, fuse_fill_dir_t filler, off_t offset,
     struct fuse_file_info *fi, enum fuse_readdir_flags flags
 ) {
+    const char* dirs = get_dirs(path);
+    if (dirs == NULL) {
+        return -ENOENT;
+    }
+
+    struct stat path_statbuf = { 0 };
+    wiki_getattr(path, &path_statbuf, NULL);
+    filler(buf, ".", &path_statbuf, 0, 0);
+    filler(buf, "..", NULL, 0, 0);
+
+    // go through each dir
+    int len = strlen(dirs);
+    char* dirs_ptr = dirs;
+    while (dirs_ptr != NULL) {
+        const char* dir = strsep(dirs_ptr, "\n");
+        filler(buf, dir, NULL, 0, 0);
+    }
+
 	return 0;
 }
 
 // open a file
 static int wiki_open(const char *path, struct fuse_file_info *fi) {
+    if ((fi->flags & O_ACCMODE) != O_RDONLY) {
+        return -EACCES;
+    }
+
+    char* content = get_content(path);
+    if (content == NULL) {
+        return -ENOENT;
+    }
+
+    fi->fh = content;
+
 	return 0;
 }
 
@@ -63,7 +93,22 @@ static int wiki_read(
     const char *path, char *buf, size_t size, off_t offset,
     struct fuse_file_info *fi
 ) {
-    return 0;
+    if (wiki_open(path, fi) != 0) {
+        return -ENOENT;
+    }
+
+    const char* content = (char*) fi->fh;
+    size_t len = strlen(content);
+    if (offset < len) {
+        if (offset + size > len) {
+            size = len - offset;
+        }
+        memcpy(buf, content, size);
+    } else {
+        size = 0;
+    }
+
+    return size;
 }
 
 // define operations that the filesystem supports
