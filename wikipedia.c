@@ -42,26 +42,32 @@ char *read_output_file() {
     return NULL;
   }
 
-  // get the size of the file
+  // get content size (file size)
   long content_sz = ftell(op);
 
   if (content_sz < 0) {
     fclose(op);
     return NULL;
   }
+
+  // reset the file pointer to beginning
   if (fseek(op, 0, SEEK_SET) != 0) {
     fclose(op);
     return NULL;
   }
 
+  // allocate memory for content
   char *content = malloc((size_t)content_sz + 1);
   if (content == NULL) {
     fclose(op);
     return NULL;
   }
-  size_t n = fread(content, 1, (size_t)content_sz, op);
+
+  // read and save the content
+  size_t read_sz = fread(content, 1, (size_t)content_sz, op);
   fclose(op);
-  content[n] = '\0';
+  content[read_sz] = '\0';
+
   return content;
 }
 
