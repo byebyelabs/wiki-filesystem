@@ -36,23 +36,21 @@ See [example](#example) for a more detailed walkthrough.
 
 ## Example
 
-1. Complete up until step 3 in [setup](#setup).
-   Now, either open a file explorer or a new terminal and navigate to `./mnt` (the 
-   mounted directory).
+1. Complete up until step 3 in [setup](#setup). Now, either open a file explorer or a new terminal and navigate to `./mnt` (the mounted directory).
 
-2. *Visual Example:* Here, you will see a directory titled today's featured Wikipedia article. 
-   *Terminal Example:* Run `ls` to list the directory contents.
+2. **Visual:** In the mounted directory, you will see a directory titled today's featured Wikipedia article.  
+   **Terminal:** Run `ls` to list the directory content (today's featured article).
 
-3. *Visual Example:* Click into the directory.
-   *Terminal Example:* Run `cd <directory-name>` to navigate into the directory. Run `ls` to list the directory contents.
+3. **Visual:** Click into the directory.  
+   **Terminal:** Run `cd <directory-name>` to navigate into the directory. Run `ls` to list the directory contents.  
    You will see `00_content` and additional directories, all with different names.
 
-4. *Visual Example:* Open `00_content` (using Vim). 
-   *Terminal Example:* Run `vim 00_content` to open the file in Vim.
+4. **Visual:** Open `00_content` (using Vim).  
+   **Terminal:** Run `vim 00_content` to open the file in Vim.  
    This will display the summary of the Wikipedia page the directory represents.
 
-5. *Visual Example:* Open another directory.
-   *Terminal Example:* Run `cd <directory-name>` to navigate into the directory. Run `ls` to list the directory contents.
+5. **Visual:** Open another directory.  
+   **Terminal:** Run `cd <directory-name>` to navigate into the directory. Run `ls` to list the directory contents.  
    You will see `00_content` and additional directories, all with different names. Continue this process to navigate to other Wikipedia pages.
 
 6. When finished, in the project directory run `make clean` so `./mnt` is unmounted.
