@@ -71,9 +71,7 @@ char *read_output_file() {
 
 char *get_root() {
   // root is always the featured title (ft) from Wikipedia
-  char *args[] = {"python3",
-                  PYTHON_SCRIPT_PATH, "-ft",
-                  OUTPUT_FILE, NULL};
+  char *args[] = {"python3", PYTHON_SCRIPT_PATH, "-ft", OUTPUT_FILE, NULL};
 
   run_python_script(args);
 
@@ -82,9 +80,8 @@ char *get_root() {
 
 char *get_dirs(char *curr_dir) {
   // get links contained in the page for this dir name
-  char *args[] = {"python3",
-                  PYTHON_SCRIPT_PATH, "-gl",
-                  curr_dir, OUTPUT_FILE, NULL};
+  char *args[] = {"python3", PYTHON_SCRIPT_PATH, "-gl",
+                  curr_dir,  OUTPUT_FILE,        NULL};
 
   run_python_script(args);
 
@@ -93,9 +90,8 @@ char *get_dirs(char *curr_dir) {
 
 char *get_content(char *curr_dir) {
   // get wikipedia summary of the page for this dir name
-  char *args[] = {"python3",
-                  PYTHON_SCRIPT_PATH, "-gs",
-                  curr_dir, OUTPUT_FILE, NULL};
+  char *args[] = {"python3", PYTHON_SCRIPT_PATH, "-gs",
+                  curr_dir,  OUTPUT_FILE,        NULL};
 
   run_python_script(args);
 
