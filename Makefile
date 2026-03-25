@@ -1,7 +1,12 @@
-.PHONY: clean
+.PHONY: clean mount
+
+all: wiki-browser
 
 clean:
 	fusermount -u ./mnt
+
+mount:
+	./wiki-browser -d -s ./mnt
 
 wiki-browser: wikipedia.c wikipedia.h main.c
 	@python3 meta.py
