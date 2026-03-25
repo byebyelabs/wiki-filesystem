@@ -46,7 +46,7 @@ See [example](#example) for a more detailed walkthrough.
    You will see `00_content` and additional directories, all with different names.
 
 4. **Visual:** Open `00_content` (using Vim).  
-   **Terminal:** Run `vim 00_content` to open the file in Vim.  
+   **Terminal:** Run `cat 00_content` to read the file in terminal.  
    This will display the summary of the Wikipedia page the directory represents.
 
 5. **Visual:** Open another directory.  
