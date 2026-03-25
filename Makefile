@@ -2,11 +2,15 @@
 
 all: wiki-browser
 
+setup:
+	@python3 -m venv venv
+	@source venv/bin/activate && pip install -r requirements.txt
+
 clean:
 	fusermount -u ./mnt
 
 mount:
-	./wiki-browser -d -s ./mnt
+	source venv/bin/activate && ./wiki-browser -d -s ./mnt
 
 wiki-browser: wikipedia.c wikipedia.h main.c
 	@python3 meta.py
