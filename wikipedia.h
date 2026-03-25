@@ -9,6 +9,6 @@
 
 char *get_root();
 
-char *get_dirs(char *curr_dir);
+char *get_dirs(const char *curr_dir);
 
-char *get_content(char *curr_dir);
+char *get_content(const char *curr_dir);

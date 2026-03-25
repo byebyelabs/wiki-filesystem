@@ -18,7 +18,7 @@ static void *wiki_init(struct fuse_conn_info *conn, struct fuse_config *cfg) {
 }
 
 // get file attributes
-static int wiki_getattr(char *path, struct stat *stbuf,
+static int wiki_getattr(const char *path, struct stat *stbuf,
                         struct fuse_file_info *_) {
   memset(stbuf, 0, sizeof(struct stat));
   if (strcmp(path, "/") == 0) {
@@ -41,7 +41,7 @@ static int wiki_getattr(char *path, struct stat *stbuf,
     // read only
     stbuf->st_mode = S_IFREG | 0444;
     // get size
-    const char *content = get_content(path);
+    char *content = get_content(path);
     stbuf->st_size = strlen(content);
     free(content);
     return 0;
@@ -57,7 +57,7 @@ static int wiki_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                         off_t offset, struct fuse_file_info *fi,
                         enum fuse_readdir_flags flags) {
   bool is_root = strcmp(path, "/") == 0;
-  const char *dirs = is_root ? get_root() : get_dirs(path);
+  char *dirs = is_root ? get_root() : get_dirs(path);
   if (dirs == NULL) {
     return -ENOENT;
   }
@@ -90,7 +90,7 @@ static int wiki_open(const char *path, struct fuse_file_info *fi) {
     return -ENOENT;
   }
 
-  fi->fh = content;
+  fi->fh = (uint64_t)content;
 
   return 0;
 }
@@ -103,7 +103,7 @@ static int wiki_read(const char *path, char *buf, size_t size, off_t offset,
     return -ENOENT;
   }
 
-  const char *content = (char *)fi->fh;
+  char *content = (char *)fi->fh;
   size_t len = strlen(content);
   if (offset < len) {
     if (offset + size > len) {
